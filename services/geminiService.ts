@@ -1,13 +1,14 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { TranslationResult } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const TEXT_MODEL_NAME = 'gemini-flash-lite-latest';
 const AUDIO_MODEL_NAME = 'gemini-2.5-flash-preview-tts';
 
 export const generateRewrites = async (text: string): Promise<TranslationResult> => {
   try {
+    // Initialize inside the function to ensure process.env is ready
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    
     const response = await ai.models.generateContent({
       model: TEXT_MODEL_NAME,
       contents: `Rewrite the following text into 3 distinct formats based on the context provided below. 
@@ -59,6 +60,9 @@ export const generateRewrites = async (text: string): Promise<TranslationResult>
 
 export const generateAudio = async (text: string): Promise<string> => {
   try {
+    // Initialize inside the function to ensure process.env is ready
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
     const response = await ai.models.generateContent({
       model: AUDIO_MODEL_NAME,
       contents: [{ parts: [{ text: text }] }],

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Copy, Check, Share2, Play, Download, Square, Loader2 } from 'lucide-react';
+import { Copy, Check, Share2, Play, Download, Square, Loader2, Volume2 } from 'lucide-react';
 import { ResultCardProps } from '../types';
 import { generateAudio } from '../services/geminiService';
 
@@ -66,8 +66,6 @@ export const ResultCard: React.FC<ResultCardProps> = ({
 
     if (isPlaying && audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      setIsPlaying(false);
       return;
     }
 
@@ -99,6 +97,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({
       }, 50);
     } catch (err) {
       console.error("Failed to generate audio", err);
+      alert("Could not generate audio. Please try again.");
     } finally {
       setIsGeneratingAudio(false);
     }
@@ -121,29 +120,34 @@ export const ResultCard: React.FC<ResultCardProps> = ({
              {/* Hidden Audio Element */}
              <audio ref={audioRef} src={audioUrl || undefined} />
 
-             {/* Play Button */}
+             {/* Play/Stop Button */}
              <button
                onClick={handlePlayAudio}
                disabled={isGeneratingAudio}
-               className={`p-1.5 rounded-full hover:bg-slate-100 text-slate-500 transition-colors ${isPlaying ? 'text-indigo-600 bg-indigo-50' : ''}`}
+               className={`flex items-center gap-1 px-2 py-1.5 rounded-md transition-colors text-xs font-medium border ${
+                 isPlaying 
+                   ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100' 
+                   : 'bg-indigo-50 text-indigo-700 border-indigo-100 hover:bg-indigo-100'
+               }`}
                title={isPlaying ? "Stop" : "Read aloud (Kore)"}
              >
                {isGeneratingAudio ? (
-                 <Loader2 size={16} className="animate-spin text-indigo-500" />
+                 <Loader2 size={14} className="animate-spin" />
                ) : isPlaying ? (
-                 <Square size={16} fill="currentColor" />
+                 <Square size={14} fill="currentColor" />
                ) : (
-                 <Play size={16} fill="currentColor" />
+                 <Play size={14} fill="currentColor" />
                )}
+               <span className="hidden sm:inline">{isPlaying ? 'Stop' : 'Listen'}</span>
              </button>
 
-             {/* Download Button */}
+             {/* Download Button - only visible when audio is ready */}
              {audioUrl && (
                <a
                  href={audioUrl}
                  download={`${title.toLowerCase()}-audio.wav`}
-                 className="p-1.5 rounded-full hover:bg-slate-100 text-slate-500 hover:text-indigo-600 transition-colors"
-                 title="Download Audio"
+                 className="p-1.5 rounded-md hover:bg-slate-100 text-slate-500 hover:text-indigo-600 transition-colors border border-transparent hover:border-slate-200"
+                 title="Download Audio (WAV)"
                >
                  <Download size={16} />
                </a>
