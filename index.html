@@ -16,9 +16,13 @@
       window.process = {
         env: {
           NODE_ENV: 'development',
-          // Note: In a real Netlify build, these are replaced by the bundler.
-          // This polyfill prevents crash if accessed directly in browser.
-          API_KEY: '' 
+          // ------------------------------------------------------------------
+          // INSTRUCTIONS FOR API KEY:
+          // 1. If deploying to Netlify: Set 'API_KEY' in Site Settings > Environment Variables.
+          // 2. If testing locally: Paste your key inside the quotes below.
+          //    Example: API_KEY: 'AIzaSy...'
+          // ------------------------------------------------------------------
+          API_KEY: 'AIzaSyBaRaMahAhhB2ljacuUg2ubZ8XriPv5a6I' 
         }
       };
       

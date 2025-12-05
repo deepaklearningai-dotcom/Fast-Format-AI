@@ -117,9 +117,13 @@ export const Translator: React.FC = () => {
               <h3 className="text-sm font-medium text-red-800">Error</h3>
               <p className="mt-1 text-sm text-red-700">{error}</p>
               {error.includes("API_KEY") && (
-                <p className="mt-2 text-xs text-red-600 font-medium">
-                  Config Check: Ensure your API_KEY is set in the environment variables.
-                </p>
+                <div className="mt-3 bg-white p-3 rounded border border-red-200">
+                  <p className="font-bold text-xs text-slate-700">How to fix:</p>
+                  <ul className="list-disc pl-4 mt-1 text-xs text-slate-600 space-y-1">
+                    <li><strong>Netlify:</strong> Go to Site Configuration &gt; Environment Variables &gt; Add Variable. <br/>Key: <code>API_KEY</code>, Value: Your Gemini Key.</li>
+                    <li><strong>Testing Locally:</strong> Open <code>index.html</code> and paste your key into the <code>API_KEY</code> field inside the script tag.</li>
+                  </ul>
+                </div>
               )}
             </div>
           </div>
