@@ -1,5 +1,5 @@
 import React from 'react';
-import { Translator } from './components/Translator';
+import { Translator } from './components/Translator.tsx';
 import { Sparkles, Zap } from 'lucide-react';
 
 const App: React.FC = () => {

@@ -12,26 +12,44 @@
       }
     </style>
     <script>
-      // Polyfill process for browser environment to prevent crashes when accessing process.env
+      // Polyfill process for browser environment to prevent crashes
       window.process = {
         env: {
-          NODE_ENV: 'development'
+          NODE_ENV: 'development',
+          // Note: In a real Netlify build, these are replaced by the bundler.
+          // This polyfill prevents crash if accessed directly in browser.
+          API_KEY: '' 
         }
       };
       
-      // Global error handler to catch startup issues
+      // Global error handler
       window.addEventListener('error', function(e) {
+        showError(e.message);
+      });
+      
+      // Handle async import errors
+      window.addEventListener('unhandledrejection', function(e) {
+        showError(e.reason ? e.reason.message : 'Unknown async error');
+      });
+
+      function showError(msg) {
         const root = document.getElementById('root');
         if (root) {
-          root.innerHTML = `
-            <div style="color: #ef4444; padding: 20px; text-align: center;">
-              <h3 style="font-weight: bold; margin-bottom: 10px;">Startup Error</h3>
-              <p>${e.message}</p>
-              <p style="font-size: 0.8em; color: #64748b; margin-top: 10px;">Check console for details.</p>
-            </div>
-          `;
+          // Don't overwrite if React has already mounted (checked by looking for children with specific classes)
+          if (!root.firstElementChild || root.firstElementChild.classList.contains('text-slate-400')) {
+            root.innerHTML = `
+              <div style="color: #ef4444; padding: 20px; text-align: center; font-family: sans-serif;">
+                <h3 style="font-weight: bold; margin-bottom: 10px;">Startup Error</h3>
+                <p>${msg}</p>
+                <p style="font-size: 0.8em; color: #64748b; margin-top: 10px;">
+                  If hosting on Netlify, ensure you are running a build command (e.g., vite build) 
+                  or that your setup handles .tsx files correctly.
+                </p>
+              </div>
+            `;
+          }
         }
-      });
+      }
     </script>
   <script type="importmap">
 {

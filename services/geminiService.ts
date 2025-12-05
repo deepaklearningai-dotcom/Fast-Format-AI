@@ -1,13 +1,21 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
-import { TranslationResult } from "../types";
+import { TranslationResult } from "../types.ts";
 
 const TEXT_MODEL_NAME = 'gemini-flash-lite-latest';
 const AUDIO_MODEL_NAME = 'gemini-2.5-flash-preview-tts';
 
+// Safe initializer to prevent crash if env is missing
+const getAIClient = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API_KEY is missing from environment variables.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
 export const generateRewrites = async (text: string): Promise<TranslationResult> => {
   try {
-    // Initialize inside the function to ensure process.env is ready
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAIClient();
     
     const response = await ai.models.generateContent({
       model: TEXT_MODEL_NAME,
@@ -60,8 +68,7 @@ export const generateRewrites = async (text: string): Promise<TranslationResult>
 
 export const generateAudio = async (text: string): Promise<string> => {
   try {
-    // Initialize inside the function to ensure process.env is ready
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAIClient();
 
     const response = await ai.models.generateContent({
       model: AUDIO_MODEL_NAME,

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Mail, MessageSquare, MessageCircle, Send, Eraser, Loader2 } from 'lucide-react';
-import { generateRewrites } from '../services/geminiService';
-import { ResultCard } from './ResultCard';
-import { TranslationResult } from '../types';
+import { generateRewrites } from '../services/geminiService.ts';
+import { ResultCard } from './ResultCard.tsx';
+import { TranslationResult } from '../types.ts';
 
 export const Translator: React.FC = () => {
   const [input, setInput] = useState('');
@@ -29,7 +29,12 @@ export const Translator: React.FC = () => {
       const data = await generateRewrites(input);
       setResult(data);
     } catch (err) {
-      setError("Something went wrong. Please check your connection and try again.");
+      console.error(err);
+      if (err instanceof Error && err.message.includes('API key')) {
+        setError("API Key Error: Please check your environment configuration.");
+      } else {
+        setError("Something went wrong. Please check your connection and try again.");
+      }
     } finally {
       setLoading(false);
     }
