@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Copy, Check, Share2, Play, Download, Square, Loader2, Volume2 } from 'lucide-react';
-import { ResultCardProps } from '../types';
-import { generateAudio } from '../services/geminiService';
+import { Copy, Check, Share2, Play, Download, Square, Loader2 } from 'lucide-react';
+import { ResultCardProps } from '../types.ts';
+import { generateAudio } from '../services/geminiService.ts';
 
 export const ResultCard: React.FC<ResultCardProps> = ({ 
   title, 
@@ -27,10 +27,21 @@ export const ResultCard: React.FC<ResultCardProps> = ({
   }, [content]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.onended = () => setIsPlaying(false);
-      audioRef.current.onpause = () => setIsPlaying(false);
-      audioRef.current.onplay = () => setIsPlaying(true);
+    const audio = audioRef.current;
+    if (audio) {
+      const onEnded = () => setIsPlaying(false);
+      const onPause = () => setIsPlaying(false);
+      const onPlay = () => setIsPlaying(true);
+      
+      audio.addEventListener('ended', onEnded);
+      audio.addEventListener('pause', onPause);
+      audio.addEventListener('play', onPlay);
+
+      return () => {
+        audio.removeEventListener('ended', onEnded);
+        audio.removeEventListener('pause', onPause);
+        audio.removeEventListener('play', onPlay);
+      };
     }
   }, [audioRef.current]);
 
@@ -97,7 +108,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({
       }, 50);
     } catch (err) {
       console.error("Failed to generate audio", err);
-      alert("Could not generate audio. Please try again.");
+      alert(err instanceof Error ? err.message : "Could not generate audio. Please try again.");
     } finally {
       setIsGeneratingAudio(false);
     }

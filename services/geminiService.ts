@@ -13,24 +13,36 @@ const getAIClient = () => {
   return new GoogleGenAI({ apiKey });
 };
 
+const cleanJson = (text: string): string => {
+  // Remove markdown code blocks if present
+  let cleaned = text.trim();
+  if (cleaned.startsWith('```json')) {
+    cleaned = cleaned.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+  } else if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```\s*/, '').replace(/\s*```$/, '');
+  }
+  return cleaned;
+};
+
 export const generateRewrites = async (text: string): Promise<TranslationResult> => {
   try {
     const ai = getAIClient();
     
+    console.log("Generating rewrites for:", text.substring(0, 50) + "...");
+
     const response = await ai.models.generateContent({
       model: TEXT_MODEL_NAME,
-      contents: `Rewrite the following text into 3 distinct formats based on the context provided below. 
-      
-      IMPORTANT: Do NOT translate the text. Keep it in the original language of the input.
+      contents: `You are an expert content rewriter. Rewrite the following text into 3 distinct formats.
       
       Input text: "${text}"
       
       Provide 3 versions:
-      1. Email: Professional, polite, and suitable for formal communication.
-      2. SMS: Concise, direct, and short.
-      3. WhatsApp: Casual, friendly, and using appropriate emojis.
+      1. email: Professional, polite, and suitable for formal communication.
+      2. sms: Concise, direct, and short (under 160 chars ideally).
+      3. whatsapp: Casual, friendly, and using appropriate emojis.
       
-      Ensure the output is valid JSON.`,
+      Output MUST be valid raw JSON only. Do not wrap in markdown.
+      `,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -55,7 +67,14 @@ export const generateRewrites = async (text: string): Promise<TranslationResult>
     });
 
     if (response.text) {
-      return JSON.parse(response.text) as TranslationResult;
+      console.log("Raw AI Response:", response.text);
+      try {
+        const cleanedText = cleanJson(response.text);
+        return JSON.parse(cleanedText) as TranslationResult;
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError, "Response text:", response.text);
+        throw new Error("Failed to parse AI response. Please try again.");
+      }
     }
     
     throw new Error("No response text received from Gemini");
@@ -69,6 +88,8 @@ export const generateRewrites = async (text: string): Promise<TranslationResult>
 export const generateAudio = async (text: string): Promise<string> => {
   try {
     const ai = getAIClient();
+    
+    console.log("Generating audio for:", text.substring(0, 50) + "...");
 
     const response = await ai.models.generateContent({
       model: AUDIO_MODEL_NAME,

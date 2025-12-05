@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mail, MessageSquare, MessageCircle, Send, Eraser, Loader2 } from 'lucide-react';
+import { Mail, MessageSquare, MessageCircle, Send, Eraser, Loader2, AlertCircle } from 'lucide-react';
 import { generateRewrites } from '../services/geminiService.ts';
 import { ResultCard } from './ResultCard.tsx';
 import { TranslationResult } from '../types.ts';
@@ -30,10 +30,11 @@ export const Translator: React.FC = () => {
       setResult(data);
     } catch (err) {
       console.error(err);
-      if (err instanceof Error && err.message.includes('API key')) {
-        setError("API Key Error: Please check your environment configuration.");
+      if (err instanceof Error) {
+        // Show specific error message for debugging
+        setError(err.message);
       } else {
-        setError("Something went wrong. Please check your connection and try again.");
+        setError("An unexpected error occurred. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -109,10 +110,17 @@ export const Translator: React.FC = () => {
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-          <div className="flex">
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-start">
+            <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+            <div className="ml-3 flex-1">
+              <h3 className="text-sm font-medium text-red-800">Error</h3>
+              <p className="mt-1 text-sm text-red-700">{error}</p>
+              {error.includes("API_KEY") && (
+                <p className="mt-2 text-xs text-red-600 font-medium">
+                  Config Check: Ensure your API_KEY is set in the environment variables.
+                </p>
+              )}
             </div>
           </div>
         </div>
