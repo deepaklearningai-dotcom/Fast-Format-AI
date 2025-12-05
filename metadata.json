@@ -1,0 +1,5 @@
+{
+  "name": "FastFormat AI",
+  "description": "Ultra-fast text rewriting for Email, SMS, and WhatsApp using Gemini Flash Lite with Text-to-Speech.",
+  "requestFramePermissions": []
+}
