@@ -4,11 +4,15 @@ import { TranslationResult } from "../types.ts";
 const TEXT_MODEL_NAME = 'gemini-flash-lite-latest';
 const AUDIO_MODEL_NAME = 'gemini-2.5-flash-preview-tts';
 
-// Safe initializer to prevent crash if env is missing
+// Hardcoded key provided by user for Vercel deployment
+const VERCEL_API_KEY = 'AIzaSyBaRaMahAhhB2ljacuUg2ubZ8XriPv5a6I';
+
 const getAIClient = () => {
-  const apiKey = process.env.API_KEY;
+  // Use the hardcoded key directly to avoid build-time 'process.env' replacement issues on Vercel
+  const apiKey = VERCEL_API_KEY;
+  
   if (!apiKey) {
-    throw new Error("API_KEY is missing from environment variables.");
+    throw new Error("API_KEY is missing. Please check services/geminiService.ts");
   }
   return new GoogleGenAI({ apiKey });
 };

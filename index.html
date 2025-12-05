@@ -16,12 +16,7 @@
       window.process = {
         env: {
           NODE_ENV: 'development',
-          // ------------------------------------------------------------------
-          // INSTRUCTIONS FOR API KEY:
-          // 1. If deploying to Netlify: Set 'API_KEY' in Site Settings > Environment Variables.
-          // 2. If testing locally: Paste your key inside the quotes below.
-          //    Example: API_KEY: 'AIzaSy...'
-          // ------------------------------------------------------------------
+          // Key is also hardcoded in services/geminiService.ts for robust Vercel deployment
           API_KEY: 'AIzaSyBaRaMahAhhB2ljacuUg2ubZ8XriPv5a6I' 
         }
       };
@@ -46,8 +41,7 @@
                 <h3 style="font-weight: bold; margin-bottom: 10px;">Startup Error</h3>
                 <p>${msg}</p>
                 <p style="font-size: 0.8em; color: #64748b; margin-top: 10px;">
-                  If hosting on Netlify, ensure you are running a build command (e.g., vite build) 
-                  or that your setup handles .tsx files correctly.
+                  If hosting on Vercel, check the console for more details.
                 </p>
               </div>
             `;

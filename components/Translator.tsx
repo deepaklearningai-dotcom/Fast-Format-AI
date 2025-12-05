@@ -120,8 +120,7 @@ export const Translator: React.FC = () => {
                 <div className="mt-3 bg-white p-3 rounded border border-red-200">
                   <p className="font-bold text-xs text-slate-700">How to fix:</p>
                   <ul className="list-disc pl-4 mt-1 text-xs text-slate-600 space-y-1">
-                    <li><strong>Netlify:</strong> Go to Site Configuration &gt; Environment Variables &gt; Add Variable. <br/>Key: <code>API_KEY</code>, Value: Your Gemini Key.</li>
-                    <li><strong>Testing Locally:</strong> Open <code>index.html</code> and paste your key into the <code>API_KEY</code> field inside the script tag.</li>
+                    <li><strong>Vercel:</strong> Go to Project Settings &gt; Environment Variables. Key: <code>API_KEY</code>, Value: Your Gemini Key. Redeploy your project.</li>
                   </ul>
                 </div>
               )}
