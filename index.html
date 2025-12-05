@@ -11,10 +11,33 @@
         font-family: 'Inter', sans-serif;
       }
     </style>
+    <script>
+      // Polyfill process for browser environment to prevent crashes when accessing process.env
+      window.process = {
+        env: {
+          NODE_ENV: 'development'
+        }
+      };
+      
+      // Global error handler to catch startup issues
+      window.addEventListener('error', function(e) {
+        const root = document.getElementById('root');
+        if (root) {
+          root.innerHTML = `
+            <div style="color: #ef4444; padding: 20px; text-align: center;">
+              <h3 style="font-weight: bold; margin-bottom: 10px;">Startup Error</h3>
+              <p>${e.message}</p>
+              <p style="font-size: 0.8em; color: #64748b; margin-top: 10px;">Check console for details.</p>
+            </div>
+          `;
+        }
+      });
+    </script>
   <script type="importmap">
 {
   "imports": {
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.1/client",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
